@@ -16,7 +16,7 @@ library(cowplot)
 library(ggpubr)
 library(patchwork)
 
-source("dms_analysis_utilities.R")
+source("functions/dms_analysis_utilities.R")
 ```
 
 Read in scores
@@ -24,7 +24,7 @@ Read in scores
 ```{r}
 # Enrich2 score files
 
-scores_file = "../scores.csv"
+scores_file = "../data/scores.csv"
 scores <- read.csv(scores_file)
 
 scores <- scores %>% mutate(pos = as.integer(pos),
@@ -145,8 +145,8 @@ scores_scatter <- dens2 + plot_spacer() + score_plot + dens1 +
                     plot_layout(ncol = 2, nrow = 2, widths = c(2, 1), heights = c(1, 2))
 scores_scatter
 
-ggsave("output/dms_B_dms_A_scatter.png", width = 5, height = 5, scores_scatter)
-ggsave("output/dms_B_dms_A_scatter.pdf", width = 5, height = 5, scores_scatter)
+ggsave("../results/plots/scatterplots/dms_B_dms_A_scatter.png", width = 5, height = 5, scores_scatter)
+ggsave("../results/plots/scatterplots/dms_B_dms_A_scatter.pdf", width = 5, height = 5, scores_scatter)
 
 ```
 
@@ -156,7 +156,7 @@ Or use plot_score_scatter
 
 
 dms_A_dms_C_plot <- plot_score_scatter(scores, score_dms_C, score_dms_A, 
-                                       output_file = "output/dms_C_dms_A_scatter.png",
+                                       output_file = "../results/plots/scatterplots/dms_C_dms_A_scatter.png",
                                        xlab = "dms_C score", ylab = "dms_A score",
                                        fixed = FALSE,
                                        density = TRUE)
@@ -164,7 +164,7 @@ dms_A_dms_C_plot <- plot_score_scatter(scores, score_dms_C, score_dms_A,
 dms_A_dms_C_plot
 
 dms_A_dms_B_plot <- plot_score_scatter(scores, score_dms_B, score_dms_A, 
-                                       output_file = "output/dms_A_dms_B_scatter.png",
+                                       output_file = "../results/plots/scatterplots/dms_A_dms_B_scatter.png",
                                        xlab = "dms_B score", ylab = "dms_A score",
                                        fixed = FALSE,
                                        density = TRUE)

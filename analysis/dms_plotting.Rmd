@@ -11,13 +11,12 @@ library(dplyr)
 library(tidyr)
 library(bio3d)
 
-source("dms_analysis_utilities.R")
+source("functions/dms_analysis_utilities.R")
 ```
 
 ```{r}
 # Enrich2 score files
-scores_file = "../results/main_identifiers_scores.tsv"
-#scores_file = "../results_stop/main_identifiers_scores.tsv"
+scores_file = "../data/scores/main_identifiers_scores.tsv"
 
 variantscore_colnames <- c("hgvs", "SE_dms_1", "epsilon_dms_1", "score_dms_1", "SE_dms_2", "epsilon_dms_2", "score_dms_2", "SE_dms_3", "epsilon_dms_3", "score_dms_3", "SE_dms_4", "epsilon_dms_4", "score_dms_4", "SE_dms_5", "epsilon_dms_5", "score_dms_5")
 
@@ -28,12 +27,13 @@ scores <- process_hgvs_df(scores)
 
 scores$is.wt = scores$mutation_type == "S"
 
-write.csv(scores, "../scores.csv", row.names = FALSE)
+# Write the dataframe to a csv
+write.csv(scores, "../data/scores.csv", row.names = FALSE)
 ```
 
 Load the WT sequence
 ```{r}
-wt_fasta = "Sequences/WT_sequence.fasta"
+wt_fasta = "../data/sequences/WT_sequence.fasta"
 
 con=file(wt_fasta,open="r")
 wt = readLines(con)[2]
@@ -90,15 +90,15 @@ ggplot(scores %>% filter(mutation_type != "X")) +
 
 Create heatmaps of the scores
 ```{r}
-print_heatmap(scores, score_dms_5, wt, scale = TRUE, invert_scale = TRUE, output_file = "output/heatmap_dms_5.pdf")
+print_heatmap(scores, score_dms_5, wt, scale = TRUE, invert_scale = TRUE, output_file = "../results/plots/heatmaps/heatmap_dms_5.pdf")
 
-print_heatmap(scores, score_dms_3, wt, scale = TRUE, invert_scale = TRUE, output_file = "output/heatmap_dms_3.pdf")
+print_heatmap(scores, score_dms_3, wt, scale = TRUE, invert_scale = TRUE, output_file = "../results/plots/heatmaps/heatmap_dms_3.pdf")
 
-print_heatmap(scores, score_dms_4, wt, scale = TRUE, invert_scale = TRUE, output_file = "output/heatmap_dms_4.pdf")
+print_heatmap(scores, score_dms_4, wt, scale = TRUE, invert_scale = TRUE, output_file = "../results/plots/heatmaps/heatmap_dms_4.pdf")
 
-print_heatmap(scores, score_dms_1, wt, scale = TRUE, invert_scale = FALSE, output_file = "output/heatmap_dms_1.pdf")
+print_heatmap(scores, score_dms_1, wt, scale = TRUE, invert_scale = FALSE, output_file = "../results/plots/heatmaps/heatmap_dms_1.pdf")
 
-print_heatmap(scores, score_dms_2, wt, scale = TRUE, invert_scale = FALSE, output_file = "output/heatmap_dms_2.pdf")
+print_heatmap(scores, score_dms_2, wt, scale = TRUE, invert_scale = FALSE, output_file = "../results/plots/heatmaps/heatmap_dms_2.pdf")
 
 ```
 
@@ -155,28 +155,28 @@ ggplot(avg_scores) +
 
 Map the scores onto structures
 ```{r}
-pdb_example1 <- read.pdb("structures/example1.pdb")
-pdb_example2 <- read.pdb("structures/example2.pdb")
+pdb_example1 <- read.pdb("../data/structures/example1.pdb")
+pdb_example2 <- read.pdb("../data/structures/example2.pdb")
 
 x = map_scores_pdb(pdb_example1, avg_scores, "avg_dms_1")
-write.pdb(x, file="structures/scores/example1_dms_1.pdb")
+write.pdb(x, file="../results/structures/example1_dms_1.pdb")
 x = map_scores_pdb(pdb_example1, avg_scores, "avg_dms_2")
-write.pdb(x, file="structures/scores/example1_dms_2.pdb")
+write.pdb(x, file="../results/structures/example1_dms_2.pdb")
 x = map_scores_pdb(pdb_example1, avg_scores, "avg_dms_3")
-write.pdb(x, file="structures/scores/example1_dms_3.pdb")
+write.pdb(x, file="../results/structures/example1_dms_3.pdb")
 x = map_scores_pdb(pdb_example1, avg_scores, "avg_dms_4")
-write.pdb(x, file="structures/scores/example1_dms_4.pdb")
+write.pdb(x, file="../results/structures/example1_dms_4.pdb")
 x = map_scores_pdb(pdb_example1, avg_scores, "avg_dms_5")
-write.pdb(x, file="structures/scores/example1_dms_5.pdb")
+write.pdb(x, file="../results/structures/example1_dms_5.pdb")
 
 x = map_scores_pdb(pdb_example2, avg_scores, "avg_dms_1")
-write.pdb(x, file="structures/scores/example2_dms_1.pdb")
+write.pdb(x, file="../results/structures/example2_dms_1.pdb")
 x = map_scores_pdb(pdb_example2, avg_scores, "avg_dms_2")
-write.pdb(x, file="structures/scores/example2_dms_2.pdb")
+write.pdb(x, file="../results/structures/example2_dms_2.pdb")
 x = map_scores_pdb(pdb_example2, avg_scores, "avg_dms_3")
-write.pdb(x, file="structures/scores/example2_dms_3.pdb")
+write.pdb(x, file="../results/structures/example2_dms_3.pdb")
 x = map_scores_pdb(pdb_example2, avg_scores, "avg_dms_4")
-write.pdb(x, file="structures/scores/example2_dms_4.pdb")
+write.pdb(x, file="../results/structures/example2_dms_4.pdb")
 x = map_scores_pdb(pdb_example2, avg_scores, "avg_dms_5")
-write.pdb(x, file="structures/scores/example2_dms_5.pdb")
+write.pdb(x, file="../results/structures/example2_dms_5.pdb")
 ```
