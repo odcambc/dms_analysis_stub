@@ -3,7 +3,7 @@
 ## Description
 This repository contains some files and structure that can be used to initialize a new DMS analysis project. It is intended to be used as a template for new projects.
 
-This workflow contains the starting framework used in the Fraser and Coyote-Maestes labs for analyzing DMS data. We will attempt to keep it up to date with the current versions of our basic analyses.
+  This workflow contains the starting framework used in the [Fraser](https://fraserlab.com/) and [Coyote-Maestas](https://www.wcoyotelab.com/) labs at UCSF for analyzing DMS data. We will attempt to keep it up to date with the current versions of our basic analyses.
 
 ## Table of Contents
 - [DMS Analysis Stub](#dms-analysis-stub)
@@ -78,7 +78,7 @@ This workflow, in some version, has been used in the following manuscripts:
 If you found this useful, please let us know!
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
 ## Contributing
 Pull requests and issues are welcome and appreciated.
