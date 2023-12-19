@@ -1,0 +1,172 @@
+---
+title: "DMS analysis stub - signficance cutoffs"
+output: html_notebook
+---
+
+
+```{r}
+library(MASS)
+
+library(ggplot2)
+library(dplyr)
+library(bio3d)
+library(tidyverse)
+library(colorspace)
+library(cowplot)
+library(ggpubr)
+library(patchwork)
+
+source("dms_analysis_utilities.R")
+```
+
+Read in scores
+
+```{r}
+# Enrich2 score files
+
+scores_file = "../scores.csv"
+scores <- read.csv(scores_file)
+
+scores <- scores %>% mutate(pos = as.integer(pos),
+                            len = as.integer(len))
+
+```
+
+
+Determine the cutoff for significantly non-neutral changes
+based on the distribution of synonymous variants. 
+
+```{r}
+
+dms_A_synonymous_fit <- fitdistr(
+  scores %>% filter(!is.na(score_dms_A) & mutation_type == "S") %>% .$score_dms_A,
+  densfun = "normal"
+)
+
+dms_B_synonymous_fit <- fitdistr(
+  scores %>% filter(!is.na(score_dms_B) & mutation_type == "S") %>% .$score_dms_B,
+  densfun = "normal"
+)
+
+dms_C_synonymous_fit <- fitdistr(
+  scores %>% filter(!is.na(score_dms_C) & mutation_type == "S") %>% .$score_dms_C,
+  densfun = "normal"
+)
+
+dms_D_synonymous_fit <- fitdistr(
+  scores %>% filter(!is.na(score_dms_D) & mutation_type == "S") %>% .$score_dms_D,
+  densfun = "normal"
+)
+
+dms_E_synonymous_fit <- fitdistr(
+  scores %>% filter(!is.na(score_dms_E) & mutation_type == "S") %>% .$score_dms_E,
+  densfun = "normal"
+)
+
+# Cutoff for _loss of function_ 
+dms_A_cutoff = dms_A_synonymous_fit$estimate[["mean"]] + 2 * dms_A_synonymous_fit$estimate[["sd"]]
+dms_B_cutoff = dms_B_synonymous_fit$estimate[["mean"]] - 2 * dms_B_synonymous_fit$estimate[["sd"]]
+dms_C_cutoff = dms_C_synonymous_fit$estimate[["mean"]] - 2 * dms_C_synonymous_fit$estimate[["sd"]]
+dms_D_cutoff = dms_D_synonymous_fit$estimate[["mean"]] - 2 * dms_D_synonymous_fit$estimate[["sd"]]
+dms_E_cutoff = dms_E_synonymous_fit$estimate[["mean"]] - 2 * dms_E_synonymous_fit$estimate[["sd"]]
+
+# Cutoffs for _gain of function_ 
+dms_A_cutoff_2 = dms_A_synonymous_fit$estimate[["mean"]] - 2 * dms_A_synonymous_fit$estimate[["sd"]]
+dms_B_cutoff_2 = dms_B_synonymous_fit$estimate[["mean"]] + 2 * dms_B_synonymous_fit$estimate[["sd"]]
+dms_C_cutoff_2 = dms_C_synonymous_fit$estimate[["mean"]] + 2 * dms_C_synonymous_fit$estimate[["sd"]]
+dms_D_cutoff_2 = dms_D_synonymous_fit$estimate[["mean"]] + 2 * dms_D_synonymous_fit$estimate[["sd"]]
+dms_E_cutoff_2 = dms_E_synonymous_fit$estimate[["mean"]] + 2 * dms_E_synonymous_fit$estimate[["sd"]]
+
+print(paste("dms_A cutoffs:", dms_A_cutoff, dms_A_cutoff_2))
+print(paste("dms_B cutoffs:", dms_B_cutoff, dms_B_cutoff_2))
+print(paste("dms_C cutoffs:", dms_C_cutoff, dms_C_cutoff_2))
+print(paste("dms_D cutoffs:", dms_D_cutoff, dms_D_cutoff_2))
+print(paste("dms_E cutoffs:", dms_E_cutoff, dms_E_cutoff_2))
+```
+
+Or call calc_syn_cutoffs
+```{r}
+calc_syn_cutoffs(scores, score_dms_A)
+calc_syn_cutoffs(scores, score_dms_B)
+calc_syn_cutoffs(scores, score_dms_C)
+calc_syn_cutoffs(scores, score_dms_D)
+
+```
+
+Plot distributions
+
+```{r}
+
+score_plot <- ggplot(scores %>% filter(mutation_type != "X")) +
+  geom_point(aes(y = score_dms_B, x = score_dms_A), alpha = 0.2) +
+  geom_vline(xintercept = dms_A_synonymous_fit$estimate[["mean"]] +
+               2 * dms_A_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  geom_vline(xintercept = dms_A_synonymous_fit$estimate[["mean"]] -
+               2 * dms_A_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  geom_hline(yintercept = dms_B_synonymous_fit$estimate[["mean"]] +
+               2 * dms_B_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  geom_hline(yintercept = dms_B_synonymous_fit$estimate[["mean"]] -
+               2 * dms_B_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  ylab("dms_B score") +
+  xlab("dms_A score") +
+  coord_fixed(ratio = 1, expand = FALSE) +
+  theme_classic() 
+
+dens1 <- ggplot(scores %>% filter(mutation_type != "X"),
+                aes(x = score_dms_B, fill = mutation_type)) + 
+  geom_density(alpha = 0.4) + 
+  geom_function(fun = dnorm, args = list(mean = dms_B_synonymous_fit$estimate[["mean"]],
+                                         sd = dms_B_synonymous_fit$estimate[["sd"]]),
+                color = "red", linetype = 2) +
+  geom_vline(xintercept = dms_B_synonymous_fit$estimate[["mean"]] +
+               2 * dms_B_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  geom_vline(xintercept = dms_B_synonymous_fit$estimate[["mean"]] -
+               2 * dms_B_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  scale_fill_manual(values = c("blue", "yellow", "grey")) +
+  theme_void() + 
+  coord_flip() +
+  theme(legend.position = "none")
+
+dens2 <- ggplot(scores %>% filter(mutation_type != "X"),
+                aes(x = score_dms_A, fill = mutation_type)) + 
+  geom_density(alpha = 0.4) + 
+  geom_function(fun = dnorm, args = list(mean = dms_A_synonymous_fit$estimate[["mean"]],
+                                         sd = dms_A_synonymous_fit$estimate[["sd"]]),
+                color = "red", linetype = 2) +
+  geom_vline(xintercept = dms_A_synonymous_fit$estimate[["mean"]] +
+               2 * dms_A_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  geom_vline(xintercept = dms_A_synonymous_fit$estimate[["mean"]] -
+               2 * dms_A_synonymous_fit$estimate[["sd"]], linetype = 2) +
+  scale_fill_manual(values = c("blue", "yellow", "grey")) +
+  theme_void() + 
+  theme(legend.position = "none")
+
+scores_scatter <- dens2 + plot_spacer() + score_plot + dens1 + 
+                    plot_layout(ncol = 2, nrow = 2, widths = c(2, 1), heights = c(1, 2))
+scores_scatter
+
+ggsave("output/dms_B_dms_A_scatter.png", width = 5, height = 5, scores_scatter)
+ggsave("output/dms_B_dms_A_scatter.pdf", width = 5, height = 5, scores_scatter)
+
+```
+
+Or use plot_score_scatter
+
+```{r}
+
+
+dms_A_dms_C_plot <- plot_score_scatter(scores, score_dms_C, score_dms_A, 
+                                       output_file = "output/dms_C_dms_A_scatter.png",
+                                       xlab = "dms_C score", ylab = "dms_A score",
+                                       fixed = FALSE,
+                                       density = TRUE)
+
+dms_A_dms_C_plot
+
+dms_A_dms_B_plot <- plot_score_scatter(scores, score_dms_B, score_dms_A, 
+                                       output_file = "output/dms_A_dms_B_scatter.png",
+                                       xlab = "dms_B score", ylab = "dms_A score",
+                                       fixed = FALSE,
+                                       density = TRUE)
+dms_A_dms_B_plot
+```
