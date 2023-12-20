@@ -12,6 +12,7 @@ This repository contains some files and structure that can be used to initialize
   - [Installation](#installation)
   - [Usage](#usage)
     - [File Structure](#file-structure)
+    - [Custom functions](#custom-functions)
   - [Citations](#citations)
   - [License](#license)
   - [Contributing](#contributing)
@@ -40,7 +41,11 @@ The file structure can be modified as needed, but the default structure is as fo
 .
 ├── analysis
 │   ├── functions
-│   │   └── dms_analysis_utilities.r
+│   │   ├── dms_analysis_utilities.r 
+│   │   ├── map_pdb.r
+│   │   ├── mkh_heatmap_function.R
+│   │   ├── plot_heatmap.r
+│   │   └── plot_scatter.r
 │   ├── dms_cutoffs.Rmd
 │   └── dms_plotting.Rmd
 ├── data
@@ -66,6 +71,23 @@ The file structure can be modified as needed, but the default structure is as fo
     └── structures
         └── (Output structures will be put in here)
 ```
+
+### Custom functions
+
+The `analysis/functions` directory contains some custom functions that are used in the analysis. Here is a brief description of some of the utilities:
+
+`dms_analysis_utilities.r` contains general functions for parsing DMS data and setting up aesthetics. Color palettes and
+  some useful variant orderings for plotting are also defined here.
+
+`map_pdb.r` contains a function for mapping positionally-summarized DMS data onto a PDB structure. This function uses the `bio3d` package.
+
+`plot_heatmap.r` contains a function for plotting a heatmap of DMS data. This function is fairly customizable, but the defaults are hopefully reasonable. Some useful variant orderings for plotting are defined in `dms_analysis_utilities.R`.
+
+`mkh_heatmap_function.R` contains an alternative heatmap plotting function. Note that the syntax is _not_ identical to `plot_heatmap.r`!
+
+`plot_scatter.r` contains a function for plotting scatterplots and marginal densities of DMS data. This function also tries
+to determine some rough significance thresholds for scores using
+the synonymous variant effect distribution. See the comments for more details.
 
 ## Citations
 This workflow, in some version, has been used in the following manuscripts:
