@@ -17,6 +17,7 @@ library(ggpubr)
 library(patchwork)
 
 source("functions/dms_analysis_utilities.R")
+source("functions/plot_scatter.R")
 ```
 
 Read in scores
@@ -96,7 +97,6 @@ calc_syn_cutoffs(scores, score_dms_D)
 Plot distributions
 
 ```{r}
-
 score_plot <- ggplot(scores %>% filter(mutation_type != "X")) +
   geom_point(aes(y = score_dms_B, x = score_dms_A), alpha = 0.2) +
   geom_vline(xintercept = dms_A_synonymous_fit$estimate[["mean"]] +

@@ -12,6 +12,10 @@ library(tidyr)
 library(bio3d)
 
 source("functions/dms_analysis_utilities.R")
+source("functions/plot_heatmap.R")
+source("functions/map_pdb.R")
+#source("functions/mkh_heatmap_function.R")
+
 ```
 
 ```{r}
@@ -100,6 +104,19 @@ print_heatmap(scores, score_dms_1, wt, scale = TRUE, invert_scale = FALSE, outpu
 
 print_heatmap(scores, score_dms_2, wt, scale = TRUE, invert_scale = FALSE, output_file = "../results/plots/heatmaps/heatmap_dms_2.pdf")
 
+```
+
+Or try out the alternative heatmap plotting function:
+```{r}
+source("functions/mkh_heatmap_function.R")
+
+create_heatmap(gene = wt, 
+               order = order_full, 
+               chunk_size = 100,
+               scores_df = scores,
+               score_column = score_dms_1,
+               variant_names = label_full,
+               output_file = "../results/plots/heatmaps/heatmap_dms_1_mkh.pdf")
 ```
 
 Plot the average scores
