@@ -24,6 +24,28 @@ library(colorspace)
 
 ## TODO: the WT squares are outlined in green, but they get overdrawn.
 
+default_order <- c("G", "A", "I", "L", "V",
+                    "C", "M",
+                    "S", "T", 
+                    "K", "R", "H",
+                    "D", "E", "N", "Q",
+                    "F", "W", "Y",
+                    "P",
+                    "X",
+                    "D_1", "D_2", "D_3",
+                    "I_1", "I_2", "I_3")
+
+default_variant_names <- c("G", "A", "I", "L", "V",
+                    "C", "M",
+                    "S", "T", 
+                    "K", "R", "H",
+                    "D", "E", "N", "Q",
+                    "F", "W", "Y",
+                    "P",
+                    "*",
+                    "Del x1", "Del x2", "Del x3",
+                    "Ins x1 (G)", "Ins x2 (GS)", "Ins x3 (GSG)")
+
 print_heatmap <- function(df, label, sequence, output_file = NULL, low = NA, 
                           high = NA, order_in = default_order, 
                           names = default_variant_names, p1_in = 0.9, 

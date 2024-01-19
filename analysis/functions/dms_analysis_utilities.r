@@ -17,6 +17,12 @@ library(colorspace)
 cbp1 <- c("#D55E00", "#56B4E9", "#009E73", "#CC79A7",
           "#E69F00", "#F0E442", "#0072B2", "#999999")
 
+variant_colorscheme <- c("D" = "#D55E00",
+                         "I" = "#56B4E9",
+                         "M" = "#009E73",
+                         "S" = "#CC79A7",
+                         "N" = "#999999")
+
 # Levels for displaying mutations
 # Alphabetical order
 
@@ -62,6 +68,7 @@ parse_hgvs <- function(hgvs_string) {
   pos = -1
   len = -1
   mutation_type = ""
+  WT = substr(hgvs_string, 1, 1)
   
   # WT case, as in enrich2 format
   if (str_detect(hgvs_string, "_wt")) {
@@ -114,7 +121,7 @@ parse_hgvs <- function(hgvs_string) {
     pos = match[2]
     variant = paste("I_", as.character(len), sep="")
   }
-  return(c(variant, pos, len, mutation_type))
+  return(c(variant, pos, len, mutation_type, WT))
 }
 
 ## Turn a 3AA HGVS string into a 1AA HGVS string
